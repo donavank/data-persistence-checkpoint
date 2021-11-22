@@ -12,16 +12,19 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    public GameObject bestScoreText; 
+
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
-    
     // Start is called before the first frame update
     void Start()
     {
+        // Update best score on load
+        UpdateBestScore();
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -59,6 +62,14 @@ public class MainManager : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+
+            // Handle new high score logic
+            if (m_Points > SceneToScenePersistor.Instance.highScore)
+            {
+                SceneToScenePersistor.Instance.SetHighScore(m_Points);
+            }
+            UpdateBestScore();
+
         }
     }
 
@@ -72,5 +83,10 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    public void UpdateBestScore()
+    {
+        bestScoreText.GetComponent<Text>().text = "Best Score: " + SceneToScenePersistor.Instance.highScorePlayerName + ": " + SceneToScenePersistor.Instance.highScore;
     }
 }
